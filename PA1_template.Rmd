@@ -8,7 +8,15 @@ output:
 
 ## Loading and preprocessing the data
 
+Read the data from the [fork of the course git repository][1]. The repository was originally forked from [Reproducable Research Coursera repository][2]. As the data are read in, the "date" and "interval" variables are combined to create a "date.timstamp" variable.
 
+```{r}
+library("dplyr")
+library("lubridate")
+
+activity <- tbl_df(read.csv("activity.csv")) %>%
+  mutate(date.timestamp = ymd_hm(sprintf("%10s %04d", date, interval)))
+```
 
 ## What is mean total number of steps taken per day?
 
@@ -23,3 +31,7 @@ output:
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+### Links
+[1] https://github.com/davelpat/RepData_PeerAssessment1
+[2] http://github.com/rdpeng/RepData_PeerAssessment1
