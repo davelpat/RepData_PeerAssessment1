@@ -5,22 +5,35 @@ output:
     keep_md: true
 ---
 
+```{r load_libs}
+require("dplyr")
+require("lubridate")
+```
 
 ## Loading and preprocessing the data
 
 Read the data from the [fork of the course git repository][1]. The repository was originally forked from [Reproducable Research Coursera repository][2]. As the data are read in, the "date" and "interval" variables are combined to create a "date.timstamp" variable.
 
 ```{r}
-library("dplyr")
-library("lubridate")
-
 activity <- tbl_df(read.csv("activity.csv")) %>%
   mutate(date.timestamp = ymd_hm(sprintf("%10s %04d", date, interval)))
 ```
 
 ## What is mean total number of steps taken per day?
 
+Here is the frequency distribution of the total number of steps take each day of the study
 
+```{r mean_and_median}
+daily.steps.count <- activity %>% group_by(date) %>% summarize(step.cnt = sum(steps, na.rm = TRUE))
+hist(daily.steps.count$step.cnt,
+     xlab = "Total Daily Steps",
+     ylab = "Frequency in Days",
+     main = "Frequency Distribution of Daily Steps")
+daily.steps.mean <- round(mean(daily.steps.count$step.cnt), 2)
+daily.steps.median <- median(daily.steps.count$step.cnt)
+```
+
+The mean number of steps taken each day is `r daily.steps.mean` and the median is `r daily.steps.median` steps.
 
 ## What is the average daily activity pattern?
 
