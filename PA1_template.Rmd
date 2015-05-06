@@ -24,7 +24,9 @@ activity <- tbl_df(read.csv("activity.csv")) %>%
 Here is the frequency distribution of the total number of steps taken each day of the study.
 
 ```{r mean_and_median, cache=TRUE}
-daily.steps.count <- activity %>% group_by(date) %>% summarize(step.cnt = sum(steps, na.rm = TRUE))
+daily.steps.count <- activity %>% 
+                     group_by(date) %>% 
+                     summarize(step.cnt = sum(steps, na.rm = TRUE))
 hist(daily.steps.count$step.cnt,
      xlab = "Total Daily Steps",
      ylab = "Frequency in Days",
@@ -37,7 +39,26 @@ The ***mean*** number of steps taken each day is **`r daily.steps.mean`** and th
 
 ## What is the average daily activity pattern?
 
+Here is a graph of the daily activity averaged across all the days of the study. The x-axis is the interval and is congruent with military time, i.e. 500 is 5 AM and 1500 is 3 PM.
 
+```{r cache=TRUE}
+interval.mean.steps <- activity %>% 
+                       group_by(interval) %>% 
+                       summarize(interval.mean = mean(steps, na.rm = TRUE))
+with(interval.mean.steps, 
+     plot(interval.mean ~ interval, 
+            type = "l",
+            xlab = "Interval",
+            ylab = "Average Steps per Interval",
+            main = "Average Daily Activity")
+     )
+       
+max.interval <- with(interval.mean.steps,
+                     interval.mean.steps[interval.mean == max(interval.mean),]
+)
+```
+
+The interval with the greatest average steps is `r max.interval$interval`.
 
 ## Imputing missing values
 
