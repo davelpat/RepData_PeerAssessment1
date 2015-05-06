@@ -12,7 +12,7 @@ require("lubridate")
 
 ## Loading and preprocessing the data
 
-Read the data from the [fork of the course git repository][1]. The repository was originally forked from [Reproducable Research Coursera repository][2]. As the data are read in, the "date" and "interval" variables are combined to create a "date.timstamp" variable.
+Read the data from the [fork of the course git repository][1]. The repository was originally forked from [Reproducable Research Coursera repository][2] on May 4, 2015. The "steps" variable is of type integer with missing values represented as "NA". The "date" variable format is "yyyy-mm-dd" and the "interval" variable format is "hhmm" with leading zeros dropped. "date" and "interval" variables have no missing values. As the data are read in, the "date" and "interval" variables are combined to create a "date.timstamp" variable with the format of "yyyy-mm-dd hh:mm:ss". During the date timestamp generation, the "interval" variable is prepended with leading zeros as needed. The data is cached to improve iteration processing time.
 
 ```{r cache=TRUE}
 activity <- tbl_df(read.csv("activity.csv")) %>%
@@ -21,7 +21,7 @@ activity <- tbl_df(read.csv("activity.csv")) %>%
 
 ## What is mean total number of steps taken per day?
 
-Here is the frequency distribution of the total number of steps take each day of the study
+Here is the frequency distribution of the total number of steps taken each day of the study.
 
 ```{r mean_and_median, cache=TRUE}
 daily.steps.count <- activity %>% group_by(date) %>% summarize(step.cnt = sum(steps, na.rm = TRUE))
