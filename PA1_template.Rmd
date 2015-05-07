@@ -30,7 +30,7 @@ daily.steps.count <- activity %>%
 hist(daily.steps.count$step.cnt,
      xlab = "Total Daily Steps",
      ylab = "Frequency in Days",
-     main = "Frequency Distribution of Daily Steps")
+     main = "Frequency Distribution of Total Daily Steps")
 daily.steps.mean <- round(mean(daily.steps.count$step.cnt), 2)
 daily.steps.median <- median(daily.steps.count$step.cnt)
 ```
@@ -58,7 +58,7 @@ max.interval <- with(interval.mean.steps,
 )
 ```
 
-The interval with the greatest average steps is `r max.interval$interval`.
+The interval with the greatest average steps is **`r max.interval$interval`**.
 
 ## Imputing missing values
 
