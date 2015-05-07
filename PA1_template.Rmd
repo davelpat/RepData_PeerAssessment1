@@ -67,5 +67,5 @@ The interval with the greatest average steps is **`r max.interval$interval`**.
 ## Are there differences in activity patterns between weekdays and weekends?
 
 ### Links
-[1] https://github.com/davelpat/RepData_PeerAssessment1
-[2] http://github.com/rdpeng/RepData_PeerAssessment1
+[1]: https://github.com/davelpat/RepData_PeerAssessment1 "fork of the course git repository"
+[2]: http://github.com/rdpeng/RepData_PeerAssessment1 "Reproducable Research Coursera repository"
