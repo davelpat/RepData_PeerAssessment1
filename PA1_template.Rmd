@@ -6,63 +6,95 @@ output:
 ---
 
 ```{r load_libs}
-require("dplyr")
-require("lubridate")
+require("lubridate", warn.conflicts = FALSE, quietly = TRUE)
+require("dplyr", warn.conflicts = FALSE, quietly = TRUE)
 ```
 
 ## Loading and preprocessing the data
 
-Read the data from the [fork of the course git repository][1]. The repository was originally forked from [Reproducable Research Coursera repository][2] on May 4, 2015. The "steps" variable is of type integer with missing values represented as "NA". The "date" variable format is "yyyy-mm-dd" and the "interval" variable format is "hhmm" with leading zeros dropped. "date" and "interval" variables have no missing values. As the data are read in, the "date" and "interval" variables are combined to create a "date.timstamp" variable with the format of "yyyy-mm-dd hh:mm:ss". During the date timestamp generation, the "interval" variable is prepended with leading zeros as needed. The data is cached to improve iteration processing time.
+Read the data from the [fork of the course git repository][1]. The repository was originally forked from [Reproducable Research Coursera repository][2] on May 4, 2015. The "steps" variable is of type integer with missing values represented as "NA". The "date" variable format is "yyyy-mm-dd" and the "interval" variable format is "hhmm" with leading zeros dropped. "date" and "interval" variables have no missing values. The data is cached to improve iteration processing time.
 
 ```{r cache=TRUE}
-activity <- tbl_df(read.csv("activity.csv")) %>%
-  mutate(date.timestamp = ymd_hm(sprintf("%10s %04d", date, interval)))
+activity <- tbl_df(read.csv("activity.csv"))
 ```
 
 ## What is mean total number of steps taken per day?
 
 Here is the frequency distribution of the total number of steps taken each day of the study.
 
-```{r mean_and_median, cache=TRUE}
-daily.steps.count <- activity %>% 
-                     group_by(date) %>% 
-                     summarize(step.cnt = sum(steps, na.rm = TRUE))
-hist(daily.steps.count$step.cnt,
+```{r compare_na_aves, cache=TRUE}
+# analysis across all days in the study, whether data were collected or not
+all.daily.steps.count <- activity %>% 
+                         group_by(date) %>% 
+                         summarize(step.cnt = sum(steps, na.rm = TRUE))
+
+# analysis across only the days of the study when data were collected
+daily.steps.count <- aggregate(steps ~ date, activity, sum, na.rm=TRUE)
+
+# and the associated plots
+par(mfrow=c(1,2))
+hist(all.daily.steps.count$step.cnt,
      xlab = "Total Daily Steps",
      ylab = "Frequency in Days",
-     main = "Frequency Distribution of Total Daily Steps")
-daily.steps.mean <- round(mean(daily.steps.count$step.cnt), 2)
-daily.steps.median <- median(daily.steps.count$step.cnt)
+     main = "Daily Steps Distribution\nfor All Days")
+
+hist(daily.steps.count$steps,
+     xlab = "Total Daily Steps",
+     ylab = "Frequency in Days",
+     main = "Daily Steps Distribution\nfor Days With Data")
+
+all.daily.steps.mean <- mean(all.daily.steps.count$step.cnt)
+all.daily.steps.median <- median(all.daily.steps.count$step.cnt)
+
+daily.steps.mean <- mean(daily.steps.count$steps)
+daily.steps.median <- median(daily.steps.count$steps)
 ```
 
-The ***mean*** number of steps taken each day is **`r daily.steps.mean`** and the ***median*** is **`r daily.steps.median`** steps.
+The mean number of steps taken across all days of the study is `r sprintf("%.2f", all.daily.steps.mean)` and the median is `r all.daily.steps.median` steps. However, given that there are eight days in the study for which data are not available, counting those days in the average calculations is misleading. Since the NAs are treated as zero, including the eight days of missing data skews the averages downward, as can be seen in the histograms above. Instead, we should only look at the days in the study for which data are available and calculate the data from them. Using just the days that data ***are*** available, the **mean** number of steps taken each day data were collected during the study is **`r sprintf("%.2f", daily.steps.mean)`** and the **median** is **`r daily.steps.median`** steps.
 
 ## What is the average daily activity pattern?
 
 Here is a graph of the daily activity averaged across all the days of the study. The x-axis is the interval and is congruent with military time, i.e. 500 is 5 AM and 1500 is 3 PM.
 
-```{r cache=TRUE}
-interval.mean.steps <- activity %>% 
-                       group_by(interval) %>% 
-                       summarize(interval.mean = mean(steps, na.rm = TRUE))
+```{r daily_activity, cache=TRUE}
+# analysis across only the days of the study when data were collected
+interval.mean.steps <- aggregate(steps ~ interval, 
+                                 activity, 
+                                 mean, na.rm=TRUE)
+
+#interval.mean.steps <- activity %>% 
+#                       group_by(interval) %>% 
+#                       summarize(interval.mean = mean(steps, na.rm = TRUE))
 with(interval.mean.steps, 
-     plot(interval.mean ~ interval, 
-            type = "l",
-            xlab = "Interval",
-            ylab = "Average Steps per Interval",
-            main = "Average Daily Activity")
+     plot(steps ~ interval, 
+          type = "l",
+          xlab = "Interval",
+          ylab = "Average Steps per Interval",
+          main = "Average Daily Activity")
      )
-       
+
 max.interval <- with(interval.mean.steps,
-                     interval.mean.steps[interval.mean == max(interval.mean),]
+                     interval.mean.steps[steps == max(steps),]
 )
 ```
 
-The interval with the greatest average steps is **`r max.interval$interval`**.
+The interval with the greatest number of steps, on average across all the days data were collected, is **`r max.interval$interval`** with **`r round(max.interval$steps)`** steps, on average.
 
 ## Imputing missing values
 
+```{r impute_nas, cache=TRUE}
+# how many observations per day? => 288
+daily.obs <- 12*24
+# get a count of the number of missing values for each day => 2304
+nas <- activity %>% 
+       group_by(date) %>% 
+       summarize(na.cnt = sum(is.na(steps)))
+missing.step.values <- sum(nas$na.cnt)
+# how many days have missing values? => 8
+empty.days <- nas[nas$na.cnt > 0, "date"]
 
+```
+The total number of missing values is `r missing.step.values`
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
