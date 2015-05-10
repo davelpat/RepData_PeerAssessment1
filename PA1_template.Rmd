@@ -54,7 +54,7 @@ daily.steps.mean <- mean(daily.steps.count$steps)
 daily.steps.median <- median(daily.steps.count$steps)
 ```
 
-The mean number of steps taken across all days of the study is `r sprintf("%.2f", all.daily.steps.mean)` and the median is `r all.daily.steps.median` steps. However, given that there are eight days in the study for which data are not available, counting those days in the average calculations is misleading. Since the NAs are treated as zero, including the eight days of missing data skews the averages downward, as can be seen in the histograms above. Instead, we should only look at the days in the study for which data are available and calculate the data from them. Using just the days that data ***are*** available, the **mean** number of steps taken each day data were collected during the study is **`r sprintf("%.2f", daily.steps.mean)`** and the **median** is **`r daily.steps.median`** steps.
+The mean number of steps taken across all days of the study is `r sprintf("%.2f", all.daily.steps.mean)` and the median is `r all.daily.steps.median` steps, if the days missing data are included. Given that there are eight days in the study for which data are not available, counting those days in the average calculations skews the averages downward, as can be seen in the histograms above. Counting the days missing data in the averages calculations implicitly imputes the missing data to be zero steps. Instead, we should only look at the days in the study for which data are available and calculate the averages from them. Using only the days that data ***are*** available, the **mean** number of steps taken each day data were collected during the study is **`r sprintf("%.2f", daily.steps.mean)`** and the **median** is **`r daily.steps.median`** steps.
 
 ## What is the average daily activity pattern?
 
@@ -79,11 +79,11 @@ max.interval <- with(interval.mean.steps,
 )
 ```
 
-The interval with the greatest number of steps, on average across all the days data were collected, is **`r max.interval$interval`** with **`r round(max.interval$steps)`** steps, on average.
+The interval with the greatest number of steps, on average across all the days data were collected, is **interval `r max.interval$interval`** with *`r round(max.interval$steps)`* steps, on average.
 
 ## Imputing missing values
 
-```{r impute_nas, cache=TRUE}
+```{r na_analysis, cache=TRUE}
 # how many observations per day? => 288
 daily.obs <- 12*24
 
@@ -96,25 +96,26 @@ missing.step.values <- sum(daily.nas$na.cnt)
 # what's the distribution of missing valuses
 plot(daily.nas$na.cnt ~ daily.nas$date, 
      xlab = "",
-     ylab = "Missing Intervals",
+     ylab = "Number of Missing Intervals",
      main = "Number of Missing Intervals\nby Date")
 
 # how many days have missing values? => 8
 empty.dates <- daily.nas[daily.nas$na.cnt > 0, "date"]
 empty.day.count <- nrow(empty.dates)
+```
 
+The total number of missing values is **`r missing.step.values`**. From the graph above, it appears that a day either has data or it does not. There appear to be no partially measured days. The number of missing days is *`r empty.day.count`*.
+
+The strategy to impute the missing data will be to replace the missing interval data with their corresponding average over the days data were actually collected.
+
+```{r compare_imputed, cache=TRUE}
 # impute the data for the missing intervals
 imputed.activity <- activity %>%
                     mutate(steps = ifelse(is.na(steps), 
                                           interval.mean.steps$steps, 
                                           steps))
-```
-The total number of missing values is **`r missing.step.values`**. From the graph, it appears that a day either has data or it does not. There appear to be no partially measured days. The number of missing days is `r empty.day.count`.
 
-The strategy to impute the missing data will be to replace the missing interval data with their corresponding average over the days data were actually collected.
-
-```{r compare_imputed, cache=TRUE}
-# analysis across all the days of the study with imputed data
+# Sum the steps across all the days of the study with imputed data
 imputed.daily.steps.count <- aggregate(steps ~ date, imputed.activity, sum)
 
 #  compare with the same plot and averages as before using the imputed data
@@ -139,8 +140,37 @@ hist(imputed.daily.steps.count$steps,
 imputed.steps.mean <- mean(imputed.daily.steps.count$steps)
 imputed.steps.median <- median(imputed.daily.steps.count$steps)
 ```
+
+The *mean* of the imputed data set (`r sprintf("%.2f", imputed.steps.mean)`) is the same as the mean of the original data set when using only the days where data were available (`r sprintf("%.2f", daily.steps.mean)`). This is expected given the strategy to impute missing data was to substitute the mean steps per interval. As noted above, this mean is significantly different if all days are included and the missing data are imputed to have a value of zero (`r sprintf("%.2f", all.daily.steps.mean)`).
+
+The *median* is also affected by the strategy used to impute missing data. Imputing the missing data to be the mean of the known data brings the median of the known data (`r daily.steps.median`) closer to the imputed mean (`r sprintf("%.2f", imputed.steps.mean)`) because the strategy increases the number of days with the mean number of steps. In this specific case, the imputed median (`r sprintf("%.2f", imputed.steps.median)`) is the same as the known data mean. Again, note that there is a significant difference between the known data median (`r daily.steps.median`) and the imputed median (`r all.daily.steps.median`) if the imputataion strategy is to treat the missing data as zero.
+
 ## Are there differences in activity patterns between weekdays and weekends?
 
-### Links
+```{r weekday_diffs, cache=TRUE}
+# add a work week factor distinguishing between work days and weekends
+work.week.activity <- imputed.activity %>%
+                      mutate(workweek = as.factor(
+                        ifelse(wday(date, label = TRUE) %in% c("Sat", "Sun"),
+                               "Weekend", "Weekday"))) 
+
+# average steps per interval, grouped by workweek
+work.week.mean.steps <- work.week.activity %>% 
+                        group_by(workweek, interval) %>% 
+                        summarize(mean.steps = mean(steps, na.rm = TRUE))
+
+# plot weekday activity versus weekend activity
+require("lattice", warn.conflicts = FALSE, quietly = TRUE)
+xyplot(mean.steps ~ interval | workweek, 
+       data = work.week.mean.steps, 
+       type = "l",
+       xlab = "Interval",
+       ylab = "Mean Number of Steps",
+       main = "Weekend vs Weekday Activity",
+       layout = c(1, 2))
+```
+
+Not surprisingly, there is significant difference in activity during weekend days compared to work days. One can see the person gets up later, and stays up a bit later, during the weekend. When the person gets up, the activity is much lower, implying more leisurely activity. The person's pace during the intervals associated with commuting during work days is also significantly lower on the weekends. Finally, one cansee that the person is more active during the weekend throughout the intervals associated with work hours during the work week.
+
 [1]: https://github.com/davelpat/RepData_PeerAssessment1 "fork of the course git repository"
 [2]: http://github.com/rdpeng/RepData_PeerAssessment1 "Reproducable Research Coursera repository"
