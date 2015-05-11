@@ -172,5 +172,5 @@ xyplot(mean.steps ~ interval | workweek,
 
 Not surprisingly, there is significant difference in activity during weekend days compared to work days. One can see the person gets up later, and stays up a bit later, during the weekend. When the person gets up, the activity is much lower, implying more leisurely activity. The person's pace during the intervals associated with commuting during work days is also significantly lower on the weekends. Finally, one cansee that the person is more active during the weekend throughout the intervals associated with work hours during the work week.
 
-[1]: https://github.com/davelpat/RepData_PeerAssessment1 "fork of the course git repository"
-[2]: http://github.com/rdpeng/RepData_PeerAssessment1 "Reproducable Research Coursera repository"
+[1]: https://github.com/davelpat/RepData_PeerAssessment1
+[2]: http://github.com/rdpeng/RepData_PeerAssessment1
