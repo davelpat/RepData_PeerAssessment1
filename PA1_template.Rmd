@@ -1,8 +1,8 @@
 ---
 title: "Reproducible Research: Peer Assessment 1"
 output: 
-  html_document:
-    keep_md: true
+html_document:
+keep_md: true
 ---
 
 ```{r load_libs}
@@ -143,7 +143,7 @@ imputed.steps.median <- median(imputed.daily.steps.count$steps)
 
 The *mean* of the imputed data set (`r sprintf("%.2f", imputed.steps.mean)`) is the same as the mean of the original data set when using only the days where data were available (`r sprintf("%.2f", daily.steps.mean)`). This is expected given the strategy to impute missing data was to substitute the mean steps per interval. As noted above, this mean is significantly different if all days are included and the missing data are imputed to have a value of zero (`r sprintf("%.2f", all.daily.steps.mean)`).
 
-The *median* is also affected by the strategy used to impute missing data. Imputing the missing data to be the mean of the known data brings the median of the known data (`r daily.steps.median`) closer to the imputed mean (`r sprintf("%.2f", imputed.steps.mean)`) because the strategy increases the number of days with the mean number of steps. In this specific case, the imputed median (`r sprintf("%.2f", imputed.steps.median)`) is the same as the known data mean. Again, note that there is a significant difference between the known data median (`r daily.steps.median`) and the imputed median (`r all.daily.steps.median`) if the imputataion strategy is to treat the missing data as zero.
+The *median* is also affected by the strategy used to impute missing data. Imputing the missing data to be the mean of the known data brings the median of the known data (`r daily.steps.median`) closer to the imputed mean (`r sprintf("%.2f", imputed.steps.mean)`) because the strategy increases the number of days with the mean number of steps. In this specific case, the imputed median (`r sprintf("%.2f", imputed.steps.median)`) is the same as the known data mean. Again, note that there is a significant difference between the known data median (`r daily.steps.median`) and the imputed median (`r all.daily.steps.median`) if the imputation strategy is to treat the missing data as zero.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -170,7 +170,7 @@ xyplot(mean.steps ~ interval | workweek,
        layout = c(1, 2))
 ```
 
-Not surprisingly, there is significant difference in activity during weekend days compared to work days. One can see the person gets up later, and stays up a bit later, during the weekend. When the person gets up, the activity is much lower, implying more leisurely activity. The person's pace during the intervals associated with commuting during work days is also significantly lower on the weekends. Finally, one cansee that the person is more active during the weekend throughout the intervals associated with work hours during the work week.
+Not surprisingly, there is significant difference in activity during weekend days compared to work days. One can see the person gets up later, and stays up a bit later, during the weekend. When the person gets up, the activity is much lower, implying more leisurely activity. The person's pace during the intervals associated with commuting during work days is also significantly lower on the weekends. Finally, one can see that the person is more active during the weekend throughout the intervals associated with work hours than during the work week.
 
-[1]: https://github.com/davelpat/RepData_PeerAssessment1
+[1]: http://github.com/davelpat/RepData_PeerAssessment1
 [2]: http://github.com/rdpeng/RepData_PeerAssessment1
