@@ -6,10 +6,6 @@ require("lubridate", warn.conflicts = FALSE, quietly = TRUE)
 require("dplyr", warn.conflicts = FALSE, quietly = TRUE)
 ```
 
-```
-## Warning: package 'dplyr' was built under R version 3.1.3
-```
-
 ## Loading and preprocessing the data
 
 Read the data from the [fork of the course git repository][1]. The repository was originally forked from [Reproducable Research Coursera repository][2] on May 4, 2015. The "steps" variable is of type integer with missing values represented as "NA". The "date" variable format is "yyyy-mm-dd" and the "interval" variable format is "hhmm" with leading zeros dropped. "date" and "interval" variables have no missing values. The data is cached to improve iteration processing time.
@@ -164,7 +160,7 @@ imputed.steps.median <- median(imputed.daily.steps.count$steps)
 
 The *mean* of the imputed data set (10766.19) is the same as the mean of the original data set when using only the days where data were available (10766.19). This is expected given the strategy to impute missing data was to substitute the mean steps per interval. As noted above, this mean is significantly different if all days are included and the missing data are imputed to have a value of zero (9354.23).
 
-The *median* is also affected by the strategy used to impute missing data. Imputing the missing data to be the mean of the known data brings the median of the known data (10765) closer to the imputed mean (10766.19) because the strategy increases the number of days with the mean number of steps. In this specific case, the imputed median (10766.19) is the same as the known data mean. Again, note that there is a significant difference between the known data median (10765) and the imputed median (10395) if the imputataion strategy is to treat the missing data as zero.
+The *median* is also affected by the strategy used to impute missing data. Imputing the missing data to be the mean of the known data brings the median of the known data (10765) closer to the imputed mean (10766.19) because the strategy increases the number of days with the mean number of steps. In this specific case, the imputed median (10766.19) is the same as the known data mean. Again, note that there is a significant difference between the known data median (10765) and the imputed median (10395) if the imputation strategy is to treat the missing data as zero.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -194,7 +190,7 @@ xyplot(mean.steps ~ interval | workweek,
 
 ![](PA1_template_files/figure-html/weekday_diffs-1.png) 
 
-Not surprisingly, there is significant difference in activity during weekend days compared to work days. One can see the person gets up later, and stays up a bit later, during the weekend. When the person gets up, the activity is much lower, implying more leisurely activity. The person's pace during the intervals associated with commuting during work days is also significantly lower on the weekends. Finally, one cansee that the person is more active during the weekend throughout the intervals associated with work hours during the work week.
+Not surprisingly, there is significant difference in activity during weekend days compared to work days. One can see the person gets up later, and stays up a bit later, during the weekend. When the person gets up, the activity is much lower, implying more leisurely activity. The person's pace during the intervals associated with commuting during work days is also significantly lower on the weekends. Finally, one can see that the person is more active during the weekend throughout the intervals associated with work hours than during the work week.
 
-[1]: https://github.com/davelpat/RepData_PeerAssessment1 "fork of the course git repository"
-[2]: http://github.com/rdpeng/RepData_PeerAssessment1 "Reproducable Research Coursera repository"
+[1]: http://github.com/davelpat/RepData_PeerAssessment1
+[2]: http://github.com/rdpeng/RepData_PeerAssessment1
