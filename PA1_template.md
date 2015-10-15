@@ -92,8 +92,8 @@ The interval with the greatest number of steps, on average across all the days d
 
 
 ```r
-# how many observations per day? => 288
-daily.obs <- 12*24
+# how many observations (at 5 minute intervals) per day? => 288
+daily.obs <- (60 / 5) * 24
 
 # get a count of the number of missing values for each day => 2304
 daily.nas <- activity %>% 

@@ -128,8 +128,8 @@ with(interval.mean.steps,
 </div>
 <div id="imputing-missing-values" class="section level2">
 <h2>Imputing missing values</h2>
-<pre class="r"><code># how many observations per day? =&gt; 288
-daily.obs &lt;- 12*24
+<pre class="r"><code># how many observations (at 5 minute intervals) per day? =&gt; 288
+daily.obs &lt;- (60 / 5) * 24
 
 # get a count of the number of missing values for each day =&gt; 2304
 daily.nas &lt;- activity %&gt;% 
