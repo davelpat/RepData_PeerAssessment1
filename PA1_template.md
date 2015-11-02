@@ -34,12 +34,11 @@ daily.steps.count <- aggregate(steps ~ date, activity, sum, na.rm=TRUE)
 # and the associated plots
 
 # There will be several histograms, so make a function to avoid duplicate code
-my.hist <- function(data, title, color, max.y=20) {
+my.hist <- function(data, title, color, ...) {
   hist(data,
        main = title,
        xlab = "Total Daily Steps",
        ylab = "Frequency in Days",
-       ylim = c(0, max.y),
        breaks = 20,
        col = color)
 }
@@ -47,13 +46,11 @@ my.hist <- function(data, title, color, max.y=20) {
 par(mfrow=c(1,2))
 my.hist(all.daily.steps.count$step.cnt,
         title = "Daily Steps Distribution\nfor All Days",
-        color = "firebrick", 
-        max.y = 10)
+        color = "firebrick")
 
 my.hist(daily.steps.count$steps,
         title = "Daily Steps Distribution\nfor Only Days With Data", 
-        color = "seagreen",
-        max.y = 10)
+        color = "seagreen")
 ```
 
 ![](PA1_template_files/figure-html/compare_na_aves-1.png) 
@@ -146,11 +143,13 @@ par(mfrow=c(1,2))
 
 my.hist(daily.steps.count$steps,
         title = "Daily Steps Distribution\nfor Only Days With Data",
-        color="seagreen")
+        color = "seagreen",
+        ylim = c(0, 20))
 
 my.hist(imputed.daily.steps.count$steps,
         title = "Daily Steps Distribution\nWith Imputed Data",
-        color = "lightgreen")
+        color = "lightgreen",
+        ylim = c(0, 20))
 ```
 
 ![](PA1_template_files/figure-html/compare_imputed-1.png) 
