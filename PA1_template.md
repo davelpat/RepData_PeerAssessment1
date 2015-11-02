@@ -1,4 +1,6 @@
 # Reproducible Research: Peer Assessment 1
+Dave Patterson  
+Monday, November 2, 2015  
 
 
 ```r
@@ -30,20 +32,28 @@ all.daily.steps.count <- activity %>%
 daily.steps.count <- aggregate(steps ~ date, activity, sum, na.rm=TRUE)
 
 # and the associated plots
-par(mfrow=c(1,2))
-hist(all.daily.steps.count$step.cnt,
-     breaks = 20,
-     col="firebrick",
-     xlab = "Total Daily Steps",
-     ylab = "Frequency in Days",
-     main = "Daily Steps Distribution\nfor All Days")
 
-hist(daily.steps.count$steps,
-     breaks = 20,
-     col="seagreen",
-     xlab = "Total Daily Steps",
-     ylab = "Frequency in Days",
-     main = "Daily Steps Distribution\nfor Only Days With Data")
+# There will be several histograms, so make a function to avoid duplicate code
+my.hist <- function(data, title, color, max.y=20) {
+  hist(data,
+       main = title,
+       xlab = "Total Daily Steps",
+       ylab = "Frequency in Days",
+       ylim = c(0, max.y),
+       breaks = 20,
+       col = color)
+}
+
+par(mfrow=c(1,2))
+my.hist(all.daily.steps.count$step.cnt,
+        title = "Daily Steps Distribution\nfor All Days",
+        color = "firebrick", 
+        max.y = 10)
+
+my.hist(daily.steps.count$steps,
+        title = "Daily Steps Distribution\nfor Only Days With Data", 
+        color = "seagreen",
+        max.y = 10)
 ```
 
 ![](PA1_template_files/figure-html/compare_na_aves-1.png) 
@@ -134,21 +144,13 @@ imputed.daily.steps.count <- aggregate(steps ~ date, imputed.activity, sum)
 #  compare with the same plot and averages as before using the imputed data
 par(mfrow=c(1,2))
 
-hist(daily.steps.count$steps,
-     breaks = 20,
-     ylim = c(0, 20),
-     col="seagreen",
-     xlab = "Total Daily Steps",
-     ylab = "Frequency in Days",
-     main = "Daily Steps Distribution\nfor Only Days With Data")
+my.hist(daily.steps.count$steps,
+        title = "Daily Steps Distribution\nfor Only Days With Data",
+        color="seagreen")
 
-hist(imputed.daily.steps.count$steps,
-     breaks = 20,
-     ylim = c(0, 20),
-     col = "lightgreen",
-     xlab = "Total Daily Steps",
-     ylab = "Frequency in Days",
-     main = "Daily Steps Distribution\nWith Imputed Data")
+my.hist(imputed.daily.steps.count$steps,
+        title = "Daily Steps Distribution\nWith Imputed Data",
+        color = "lightgreen")
 ```
 
 ![](PA1_template_files/figure-html/compare_imputed-1.png) 
