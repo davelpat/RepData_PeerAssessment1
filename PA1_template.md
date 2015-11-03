@@ -1,6 +1,6 @@
 # Reproducible Research: Peer Assessment 1
 Dave Patterson  
-Monday, November 2, 2015  
+Tuesday, November 3, 2015  
 
 
 ```r
@@ -36,19 +36,20 @@ daily.steps.count <- aggregate(steps ~ date, activity, sum, na.rm=TRUE)
 # There will be several histograms, so make a function to avoid duplicate code
 my.hist <- function(data, title, color, ...) {
   hist(data,
-       main = title,
-       xlab = "Total Daily Steps",
-       ylab = "Frequency in Days",
+       main   = title,
+       xlab   = "Total Daily Steps",
+       ylab   = "Frequency in Days",
        breaks = 20,
-       col = color)
+       col    = color,
+       ...)
 }
 
 par(mfrow=c(1,2))
-my.hist(all.daily.steps.count$step.cnt,
+my.hist(data  = all.daily.steps.count$step.cnt,
         title = "Daily Steps Distribution\nfor All Days",
         color = "firebrick")
 
-my.hist(daily.steps.count$steps,
+my.hist(data  = daily.steps.count$steps,
         title = "Daily Steps Distribution\nfor Only Days With Data", 
         color = "seagreen")
 ```
@@ -141,15 +142,15 @@ imputed.daily.steps.count <- aggregate(steps ~ date, imputed.activity, sum)
 #  compare with the same plot and averages as before using the imputed data
 par(mfrow=c(1,2))
 
-my.hist(daily.steps.count$steps,
+my.hist(data  = daily.steps.count$steps,
         title = "Daily Steps Distribution\nfor Only Days With Data",
         color = "seagreen",
-        ylim = c(0, 20))
+        ylim  = c(0, 20))
 
-my.hist(imputed.daily.steps.count$steps,
+my.hist(data  = imputed.daily.steps.count$steps,
         title = "Daily Steps Distribution\nWith Imputed Data",
         color = "lightgreen",
-        ylim = c(0, 20))
+        ylim  = c(0, 20))
 ```
 
 ![](PA1_template_files/figure-html/compare_imputed-1.png) 
